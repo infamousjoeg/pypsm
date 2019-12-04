@@ -1,6 +1,8 @@
-from pypsm import RDP
 import os
+import sys
 
+sys.path.append('../')
+from pypsm import RDP
 
 psmtestconnect = RDP(
     base_uri    = os.environ.get('PYPSM_BASEURI'),
@@ -12,6 +14,7 @@ psmtestconnect = RDP(
 
 psmtestconnect.connect()
 
+print('==========================')
 print('connect.rdp File Contents:')
 print('==========================')
 f = open('connect.rdp', 'rb')

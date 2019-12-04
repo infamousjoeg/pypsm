@@ -7,20 +7,18 @@ from subprocess import PIPE, Popen
 
 class RDP(object):
 
-    def __init__(self, base_uri, username, password, address, otpmode=None, otp=None, authtype='cyberark', platformid='PSMSecureConnect', verify=True):
+    def __init__(self, base_uri, username, password, address, otpmode='push', otp=None, authtype='cyberark', platformid='PSMSecureConnect', verify=True):
 
         # Declare variables for self
         self._base_uri = base_uri.rstrip('/').replace('https://','')
         self._username = username
         self._password = password
         self._type = authtype.lower()
+        self._otpmode = otpmode.lower()
 
-        if otpmode is not None:
-            self._otpmode = otpmode.lower()
-
-            if self._otpmode != 'challenge' or self._otpmode != 'append' or self._otpmode != 'push' and self._type == 'radius':
-                raise Exception('only "challenge", "append", or "push" accepted for otpmode value')
-                exit()
+        if (self._otpmode != 'challenge' and self._otpmode != 'append' and self._otpmode != 'push') and self._type == 'radius':
+            raise Exception('only "challenge", "append", or "push" accepted for otpmode value')
+            exit()
         
         self._otp = otp
 
@@ -74,7 +72,7 @@ class RDP(object):
                 # Token received and added to Authorization in header
                 self._headers['Authorization'] = response
 
-        elif self._type == 'radius' and self.otpmode == 'push':
+        elif self._type == 'radius' and self._otpmode == 'push':
             # Attempt RADIUS w/ username + password ONLY
             payload = """{{
                 "Username": "{}",
@@ -170,15 +168,14 @@ class RDP(object):
         }}""".format(username=self._username, password=self._password, address=self._address, platformid=self._platformid)
         url = "/PasswordVault/api/Accounts/AdHocConnect"
         response = self._apiconnect("POST", url, payload, self._headers, parse=False)
-
+        
         try:
-            if json.loads(response)['ErrorCode']:
-                raise Exception('[{}] {}'.format(response['ErrorCode'],response['ErrorMessage']))
-                exit()
-        except:
             f = open('connect.rdp','wb+')
             f.write(response)
             f.close()
             print('connect.rdp created for connection')
-        
+        except Exception as e:
+            raise Exception(e)
+            exit()
+
         self._logoff()

@@ -18,8 +18,8 @@ class RDP(object):
         if otpmode is not None:
             self._otpmode = otpmode.lower()
 
-            if self._otpmode != 'challenge' or self._otpmode != 'append' or self._otpmode != 'none' and self._type == 'radius':
-                raise Exception('only "challenge", "append", or "none" accepted for otpmode value')
+            if self._otpmode != 'challenge' or self._otpmode != 'append' or self._otpmode != 'push' and self._type == 'radius':
+                raise Exception('only "challenge", "append", or "push" accepted for otpmode value')
                 exit()
         
         self._otp = otp
@@ -74,7 +74,7 @@ class RDP(object):
                 # Token received and added to Authorization in header
                 self._headers['Authorization'] = response
 
-        elif self._type == 'radius' and self.otpmode == 'none':
+        elif self._type == 'radius' and self.otpmode == 'push':
             # Attempt RADIUS w/ username + password ONLY
             payload = """{{
                 "Username": "{}",

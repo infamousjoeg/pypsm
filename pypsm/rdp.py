@@ -172,19 +172,4 @@ class RDP(object):
             f = open('connect.rdp','wb+')
             f.write(response)
             f.close()
-
-            try:
-                resp, err = Popen(
-                    [
-                        'mstsc.exe',
-                        'connect.rdp'
-                    ],
-                    stdout=PIPE,
-                    stderr=PIPE
-                ).communicate()
-
-                if err:
-                    raise Exception(err.decode('utf-8').strip())
-            except Exception as e:
-                raise Exception(e)
-                exit()
+            print('connect.rdp created for connection')

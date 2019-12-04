@@ -11,3 +11,10 @@ psmtestconnect = RDP(
 )
 
 psmtestconnect.connect()
+
+print('connect.rdp File Contents:')
+print('==========================')
+f = open('connect.rdp', 'rb')
+for line in f:
+    print(line)
+f.close()

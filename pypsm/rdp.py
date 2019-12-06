@@ -2,7 +2,6 @@ import http.client
 import json
 import mimetypes
 import ssl
-from subprocess import PIPE, Popen
 
 
 class RDP(object):
@@ -22,7 +21,7 @@ class RDP(object):
         
         self._otp = otp
 
-        if not isinstance(self._otp, int) and self._type == 'radius':
+        if not isinstance(self._otp, int) and (self._type == 'radius' and self._type == 'challenge'):
             raise Exception('provide a valid integer value for otp')
 
         self._address = address
@@ -93,32 +92,32 @@ class RDP(object):
                 # Token received and added to Authorization in header
                 self._headers['Authorization'] = response
 
-        elif self._type == 'radius' and self._otpmode == 'challenge':
-            payload = """{{
-                "Username": "{}",
-                "Password": "{}"
-            }}""".format(self._username, self._password)
-            url = "/PasswordVault/api/auth/radius/logon"
-            response = self._apiconnect("POST", url, payload, self._headers)
+        # elif self._type == 'radius' and self._otpmode == 'challenge':
+        #     payload = """{{
+        #         "Username": "{}",
+        #         "Password": "{}"
+        #     }}""".format(self._username, self._password)
+        #     url = "/PasswordVault/api/auth/radius/logon"
+        #     response = self._apiconnect("POST", url, payload, self._headers)
 
-            try:
-                if response['ErrorCode'] == 'ITATS542I':
-                    # Second Factor Authentication - switch password to otp code
-                    payload = """{{
-                        "Username": "{}",
-                        "Password": "{}"
-                    }}""".format(self._username, self._otp)
-                    url = "/PasswordVault/api/auth/radius/logon"
-                    response = self._apiconnect("POST", url, payload, self._headers)
-                elif response['ErrorCode']:
-                    raise Exception('[{}] {}'.format(response['ErrorCode'],response['ErrorMessage']))
-                    exit()
-                else:
-                    # Token received and added to Authorization in header
-                    self._headers['Authorization'] = response
-            except:
-                raise Exception('an unknown error occurred during 2nd factor attempt')
-                exit()
+        #     try:
+        #         if response['ErrorCode'] == 'ITATS542I':
+        #             # Second Factor Authentication - switch password to otp code
+        #             payload = """{{
+        #                 "Username": "{}",
+        #                 "Password": "{}"
+        #             }}""".format(self._username, self._otp)
+        #             url = "/PasswordVault/api/auth/radius/logon"
+        #             response = self._apiconnect("POST", url, payload, self._headers)
+        #         elif response['ErrorCode']:
+        #             raise Exception('[{}] {}'.format(response['ErrorCode'],response['ErrorMessage']))
+        #             exit()
+        #         else:
+        #             # Token received and added to Authorization in header
+        #             self._headers['Authorization'] = response
+        #     except:
+        #         raise Exception('an unknown error occurred during 2nd factor attempt')
+        #         exit()
 
         elif self._type == 'radius' and self._otpmode == 'append':
             payload = """{{
@@ -166,6 +165,7 @@ class RDP(object):
                 "ConnectionComponent": "PSM-RDP"
             }}
         }}""".format(username=self._username, password=self._password, address=self._address, platformid=self._platformid)
+
         url = "/PasswordVault/api/Accounts/AdHocConnect"
         response = self._apiconnect("POST", url, payload, self._headers, parse=False)
         

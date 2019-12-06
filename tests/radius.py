@@ -1,10 +1,9 @@
 import os
 import sys
 
-sys.path.append('../')
+sys.path.append('..')
 from pypsm import RDP
 
-otp = input('Please enter your OTP code: ')
 
 psmtestconnect = RDP(
     base_uri    = os.environ.get('PYPSM_BASEURI'),
@@ -12,8 +11,7 @@ psmtestconnect = RDP(
     password    = os.environ.get('PYPSM_PASSWORD'),
     address     = os.environ.get('PYPSM_ADDRESS'),
     authtype    = os.environ.get('PYPSM_AUTHTYPE'),
-    otpmode     = os.environ.get('PYPSM_OTPMODE'),
-    otp         = int(otp)
+    otpmode     = os.environ.get('PYPSM_OTPMODE')
 )
 
 psmtestconnect.connect()

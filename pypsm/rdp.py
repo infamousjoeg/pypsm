@@ -6,7 +6,7 @@ import ssl
 
 class RDP(object):
 
-    def __init__(self, base_uri, username, password, address, otpmode='push', otp=None, authtype='cyberark', platformid='PSMSecureConnect', verify=True):
+    def __init__(self, base_uri, username, password, address, otpmode='push', otp=None, authtype='cyberark', platformid='PSMSecureConnect', logonto=None, verify=True):
 
         # Declare variables for self
         self._base_uri = base_uri.rstrip('/').replace('https://','')
@@ -28,6 +28,7 @@ class RDP(object):
         self._platformid = platformid
         self._conncomp = 'PSM-RDP'
         self._headers = {'Content-Type': 'application/json'}
+        self._logonto = logonto
         self._verify = verify
 
 
@@ -149,15 +150,27 @@ class RDP(object):
 
         self._logon()
 
-        payload = """{{
+        if self._logonto:
+            payload = """{{
             "Username": "{username}",
             "Secret": "{password}",
             "Address": "{address}",
             "PlatformId": "{platformid}",
             "PSMConnectPreRequisites": {{
-                "ConnectionComponent": "PSM-RDP"
+                "ConnectionComponent": "PSM-RDP",
+                "LogonTo": "{logonto}"
             }}
-        }}""".format(username=self._username, password=self._password, address=self._address, platformid=self._platformid)
+        }}""".format(username=self._username, password=self._password, address=self._address, platformid=self._platformid, logonto=self._logonto)
+        else:
+            payload = """{{
+                "Username": "{username}",
+                "Secret": "{password}",
+                "Address": "{address}",
+                "PlatformId": "{platformid}",
+                "PSMConnectPreRequisites": {{
+                    "ConnectionComponent": "PSM-RDP"
+                }}
+            }}""".format(username=self._username, password=self._password, address=self._address, platformid=self._platformid)
 
         url = "/PasswordVault/api/Accounts/AdHocConnect"
         response = self._apiconnect("POST", url, payload, self._headers, parse=False)

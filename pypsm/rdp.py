@@ -158,7 +158,7 @@ class RDP(object):
             "PlatformId": "{platformid}",
             "PSMConnectPreRequisites": {{
                 "ConnectionComponent": "PSM-RDP",
-                "LogonTo": "{logonto}"
+                "LogonDomain": "{logonto}"
             }}
         }}""".format(username=self._username, password=self._password, address=self._address, platformid=self._platformid, logonto=self._logonto)
         else:

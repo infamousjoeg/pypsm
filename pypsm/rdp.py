@@ -145,13 +145,6 @@ class RDP(object):
             exit()
 
 
-    def _logoff(self):
-
-        payload = "{}"
-        url = '/PasswordVault/api/auth/logoff'
-        response = self._apiconnect("POST", url, payload, self._headers)
-
-
     def connect(self):
 
         self._logon()
@@ -179,5 +172,3 @@ class RDP(object):
         except Exception as e:
             raise Exception(e)
             exit()
-
-        self._logoff()

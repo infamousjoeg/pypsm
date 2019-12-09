@@ -15,7 +15,7 @@ with open(VERSION_FILE, "r") as version_fp:
     exec(version_fp.read(), VERSION_DATA)
 
 setuptools.setup(
-    name="pypsm",
+    name="cybr-pypsm",
     version=VERSION_DATA['__version__'],
     author="Joe Garcia",
     author_email="joe.garcia@cyberark.com",

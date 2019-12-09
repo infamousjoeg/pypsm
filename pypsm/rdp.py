@@ -168,6 +168,8 @@ class RDP(object):
 
         url = "/PasswordVault/api/Accounts/AdHocConnect"
         response = self._apiconnect("POST", url, payload, self._headers, parse=False)
+        # Enable for MacOS RDP Client fix
+        response += b'enablecredsspsupport:i:0'
         
         try:
             f = open('connect.rdp','wb+')

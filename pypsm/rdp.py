@@ -158,7 +158,7 @@ class RDP(object):
             "PlatformId": "{platformid}",
             "extraFields": {{
                 "LogonDomain": "{logonto}"
-            }}
+            }},
             "PSMConnectPreRequisites": {{
                 "ConnectionComponent": "PSM-RDP"
             }}
